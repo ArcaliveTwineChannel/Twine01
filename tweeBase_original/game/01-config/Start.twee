@@ -11,18 +11,9 @@ Sample
 
 :: Start [nobr nosave]
 <<variablesVersionUpdate>>
-Start 페이지
+플레이어 이름-----------<br>
+<<textbox "$Player.Name" $Player.Name>><br>
 <br>
-[[Start2]]
-<br>
-[[test]]
+[[시작하기|튜토리얼]]
 
-:: Start2 [nobr]
-start2
-<br>
-[[Start]]
-
-:: test [nobr]
-test
-<br>
-[[Start]]
+::튜토리얼

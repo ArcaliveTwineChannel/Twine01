@@ -1,0 +1,6 @@
+::StoryInit
+<<set $player = {
+    "name" : "주인공",
+    "gender" : "남", /* 여, 남 으로 통일할것.*/
+    "hp" :100
+}>>
