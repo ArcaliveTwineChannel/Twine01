@@ -1,0 +1,28 @@
+:: StoryData
+{
+    "ifid": "F006C3ED-E5FC-4C4C-939C-3991E304A11D"
+}
+
+:: StoryTitle
+Sample(sample)
+
+:: StoryDisplayTitle [nobr]
+Sample
+
+:: Start [nobr nosave]
+<<variablesVersionUpdate>>
+Start 페이지
+<br>
+[[Start2]]
+<br>
+[[test]]
+
+:: Start2 [nobr]
+start2
+<br>
+[[Start]]
+
+:: test [nobr]
+test
+<br>
+[[Start]]
