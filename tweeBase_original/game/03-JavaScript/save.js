@@ -2,7 +2,7 @@
 window.prepareSaveDetails = function (forceRun){
 	if("gridSaveDetails" in localStorage === false || forceRun === true){
 		var saveDetails = {autosave: null, slots:[null,null,null,null,null,null,null,null]}
-		var SugarCubeSaveDetails = Save.get();
+		var SugarCubeSaveDetails = Save.browser.slot.entries();
 		if(SugarCubeSaveDetails.autosave != null){
 			saveDetails.autosave = {
 				title:SugarCubeSaveDetails.autosave.title,
@@ -84,7 +84,7 @@ window.deleteAllSaveDetails = function (saveSlot){
 
 // 현재 세이브 리스트 반환
 window.returnSaveDetails = function () {
-	return Save.get();
+	return Save.browser.slot.entries();
 }
 
 window.resetSaveMenu = function () {

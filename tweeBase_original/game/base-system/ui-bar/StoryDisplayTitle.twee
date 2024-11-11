@@ -1,0 +1,5 @@
+:: StoryDisplayTitle [nobr]
+<<if passage() == "Start">>
+ 실낙원
+<<else>>
+<</if>>
