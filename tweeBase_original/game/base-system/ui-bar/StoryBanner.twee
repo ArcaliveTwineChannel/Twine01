@@ -1,0 +1,4 @@
+:: StoryBanner 
+<<if passage() == "Start">>
+잔혹동화, 아포칼립스, 디스토피아
+<</if>>

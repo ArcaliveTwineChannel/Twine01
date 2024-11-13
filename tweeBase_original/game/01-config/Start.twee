@@ -1,0 +1,44 @@
+:: StoryData
+{
+    "ifid": "F006C3ED-E5FC-4C4C-939C-3991E304A11D"
+}
+
+:: Start
+<<set _Player_Setting = false>> /* 플레이어 버튼 on,off 변수*/
+<<variablesVersionUpdate>>
+
+<<button "캐릭터 설정">><br>
+<br>
+    <<if _Player_Setting == false>>
+
+        <<set _Player_Setting = true>>
+        <<replace "#Player_Setting">>
+            <br>
+            <br>
+            플레이어 이름-----------<br>
+            <<textbox "$player.name" $player.name>><br>
+            <br>
+            플레이어 성별-----------<br>
+            남자 <<foldButtonVar "$player.gender" "남">><br>
+            여자 <<foldButtonVar "$player.gender" "여">><br>
+        <br>
+        <</replace>>
+
+    <<else>>
+
+        <<set _Player_Setting = false>>
+        <<replace "#Player_Setting">><</replace>>
+
+    <</if>>
+<</button>>
+<span id="Player_Setting"></span>
+<br>
+[[시작하기|튜토리얼]]
+
+::튜토리얼
+아몰라
+
+
+[[메인화면|main]]
+
+::main
