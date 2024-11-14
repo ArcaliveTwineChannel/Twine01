@@ -1,0 +1,13 @@
+:: StoryCaption
+<<set $currentOverlay to null>>
+
+<<button 저장/옵션>>
+	<<overlayReplace "options">>
+<</button>>
+
+<div id="customOverlay" class="customOverlay hidden">
+	<div id="customOverlayTitle" class="fixedClose"></div>
+	<div id="customOverlaySaveContent"></div>
+	<div id="customOverlayContent"></div>
+</div>
+
