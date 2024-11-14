@@ -1,0 +1,41 @@
+:: Widgets [widget]
+
+ /*단일 선택지를 제공하는 라디오 버튼 매크로 정의*/
+
+<<nobr>>
+    <<widget "foldButtonVar">>
+        <<set _varName to $args[0]>>
+        <<set _option1 to $args[1]>>
+        <<set _Current_Value = State.getVar(_varName)>>
+
+        <<if _option1 == _Current_Value>>
+            <<radiobutton  _varName _option1 autocheck>>
+        <<else>>
+            <<radiobutton _varName _option1>>
+        <</if>>
+    <</widget>>
+<</nobr>>
+
+/*
+쓰는법 :
+
+남자 <<foldButtonVar "$player.gender" "남">><br>
+*/
+
+<<nobr>>
+// 갈 수 있는 장소 출력해주는 위젯
+<<widget "navigateLocation">>
+    <<set _locationList to $args[0]>>
+
+    <<for _tempLocation range Object.keys(_locationList)>>
+        <<set _currentKey to _tempLocation>>
+        <<set _currentValue to _locationList[_currentKey]>>
+        [[<<$currentKey>>|<<$currentValue>>]] 
+    <</for>>
+<</widget>>
+<</nobr>>
+/*
+사용법
+
+<<navigateLocation $location["loc1"]>>
+*/
