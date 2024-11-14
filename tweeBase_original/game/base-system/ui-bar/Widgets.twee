@@ -30,7 +30,7 @@
     <<for _tempLocation range Object.keys(_locationList)>>
         <<set _currentKey to _tempLocation>>
         <<set _currentValue to _locationList[_currentKey]>>
-        [[<<$currentKey>>|<<$currentValue>>]] 
+        <<link _currentKey _currentValue>><</link>> 
     <</for>>
 <</widget>>
 <</nobr>>

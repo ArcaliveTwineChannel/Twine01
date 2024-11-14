@@ -583,7 +583,10 @@ Config.passages.nobr = true;</script><tw-passagedata pid="1" name="Start" tags="
 [[시작하기|튜토리얼]]</tw-passagedata><tw-passagedata pid="2" name="튜토리얼" tags="" position="225,100" size="100,100">아몰라
 
 
-[[메인화면|main]]</tw-passagedata><tw-passagedata pid="3" name="main" tags="" position="350,100" size="100,100">[[장소2|loc2]] [[장소3|loc3]]</tw-passagedata><tw-passagedata pid="4" name="loc2" tags="" position="475,100" size="100,100">장소2</tw-passagedata><tw-passagedata pid="5" name="loc3" tags="" position="600,100" size="100,100">장소3</tw-passagedata><tw-passagedata pid="6" name="versionInfo" tags="widget" position="725,100" size="100,100">&lt;&lt;widget &quot;versioninfo&quot;&gt;&gt;&lt;&lt;nobr&gt;&gt;
+[[메인화면|main]]</tw-passagedata><tw-passagedata pid="3" name="main" tags="" position="350,100" size="100,100">&lt;&lt;navigateLocation $location[&quot;loc1&quot;]&gt;&gt;</tw-passagedata><tw-passagedata pid="4" name="loc2" tags="" position="475,100" size="100,100">장소2</tw-passagedata><tw-passagedata pid="5" name="loc3" tags="" position="600,100" size="100,100">장소3
+
+:loc4
+장소4</tw-passagedata><tw-passagedata pid="6" name="versionInfo" tags="widget" position="725,100" size="100,100">&lt;&lt;widget &quot;versioninfo&quot;&gt;&gt;&lt;&lt;nobr&gt;&gt;
 sample &lt;&lt;print StartConfig.version&gt;&gt;
 &lt;br&gt;
 테스트 에디션
@@ -608,10 +611,6 @@ sample &lt;&lt;print StartConfig.version&gt;&gt;
 }&gt;&gt;
 
 /*
-그리고 이걸 페세지 이동하는 걸 자동출력하거나 할 수 있나?
-*/
-
-/*
 딕셔너리로 장소에서 갈 수 있는 장소들에 대한 정보를 저장
 그 정보도 딕셔너리로 저장할 것인데
 &quot;페세지에서 표현할 이름&quot; : &quot;코드에서 사용되는 이름&quot;으로 지정
@@ -620,7 +619,8 @@ sample &lt;&lt;print StartConfig.version&gt;&gt;
 &lt;&lt;set $location to {
     &quot;loc1&quot; : {
         &quot;장소2&quot; : &quot;loc2&quot;, 
-        &quot;장소3&quot; : &quot;loc3&quot;
+        &quot;장소3&quot; : &quot;loc3&quot;,
+        &quot;장소4&quot; : &quot;loc4&quot;
     }
 }&gt;&gt;
 
@@ -665,7 +665,7 @@ ex: &lt;&lt;= showStat(10, 15)&gt;&gt;
     &lt;&lt;for _tempLocation range Object.keys(_locationList)&gt;&gt;
         &lt;&lt;set _currentKey to _tempLocation&gt;&gt;
         &lt;&lt;set _currentValue to _locationList[_currentKey]&gt;&gt;
-        [[&lt;&lt;$currentKey&gt;&gt;|&lt;&lt;$currentValue&gt;&gt;]] 
+        &lt;&lt;link _currentKey _currentValue&gt;&gt;&lt;&lt;/link&gt;&gt; 
     &lt;&lt;/for&gt;&gt;
 &lt;&lt;/widget&gt;&gt;
 &lt;&lt;/nobr&gt;&gt;

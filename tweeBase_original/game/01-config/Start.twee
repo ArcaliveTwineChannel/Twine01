@@ -42,10 +42,13 @@
 [[메인화면|main]]
 
 ::main
-[[장소2|loc2]] [[장소3|loc3]]
+<<navigateLocation $location["loc1"]>>
 
 ::loc2
 장소2
 
 ::loc3
 장소3
+
+::loc4
+장소4
