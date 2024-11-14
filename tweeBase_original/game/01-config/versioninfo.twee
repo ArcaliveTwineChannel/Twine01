@@ -1,7 +1,0 @@
-:: versionInfo [widget]
-<<widget "versioninfo">><<nobr>>
-sample <<print StartConfig.version>>
-<br>
-테스트 에디션
-<br><br>
-<</nobr>><</widget>>
