@@ -1,0 +1,10 @@
+:: variablesVersionUpdate [widget nobr]
+<<widget "variablesVersionUpdate">>
+<<if $saveId is undefined>>
+	<<set $saveId to random(10000, 99999)>>
+<</if>>
+<<if $saveName is undefined>>
+	<<set $saveName to "">>
+<</if>>
+<<set Config.saves.metadata = () => { return { "saveId": $saveId, "saveName": $saveName }; }>>
+<</widget>>
