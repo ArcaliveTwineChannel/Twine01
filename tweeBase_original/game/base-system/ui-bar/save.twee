@@ -1,12 +1,12 @@
 :: overlayReplace [widget]
 <<widget "overlayReplace">><<nobr>>
-	<<if $args[0]>>
-		<<if $currentOverlay isnot $args[0]>>
-			<<set $currentOverlay to $args[0]>>
+	<<if _args[0]>>
+		<<if $currentOverlay isnot _args[0]>>
+			<<set $currentOverlay to _args[0]>>
 			<<if $currentOverlay isnot "options">>
 				<<replace #customOverlaySaveContent>><</replace>>
 			<</if>>
-			<<switch $args[0]>>
+			<<switch _args[0]>>
                 <<case "options">>
                     <<replace #customOverlayTitle>><<OverlayTitle "options">><</replace>>
                     <<replace #customOverlaySaveContent>>
@@ -33,19 +33,19 @@
 	<<addclass "#customOverlay" "hidden">>
 	<<set $currentOverlay to null>>
 <</button>>
-<<if $args[0] is "options">>
+<<if _args[0] is "options">>
 	<<button "세이브 내보내기/불러오기">>
 		<<overlayReplace "optionsExportImport">>
 		<<set $currentOverlay to null>>
 	<</button>>
 <</if>>
-<<if $args[0] is "optionsExportImport">>
+<<if _args[0] is "optionsExportImport">>
 	<<button "옵션으로 돌아가기">>
 		<<overlayReplace "options">>
 		<<set $currentOverlay to "options">>
 	<</button>>
 <</if>>
-<<if $args[0] is "colorCodes">>
+<<if _args[0] is "colorCodes">>
 	<<button "색상 코드">>
 		<<script>>overlayShowHide('statsHelp');<</script>><!--</script>-->
 	<</button>>
@@ -72,7 +72,7 @@
 
 <<widget "saveList">><<nobr>>
 <<run prepareSaveDetails()>>
-<<if !$tags.contains("nosave")>>
+<<if !$tags.includes("nosave")>>
 	<<set $saveUnlock to true>>
 <<else>>
 	<<set $saveUnlock to false>>
@@ -98,7 +98,7 @@
 	<<for _i to 0; _i lt 10; _i++>>
 		<div class="savesListRow">
 			<<if _i is 0>>
-				<<if _saveDetails.autosave isnot null>>
+				<<if _saveDetails.autosave isnot null and _saveDetails.autosave.desc isnot undefined>>
 					<div class="saveGroup">
 						<div class="saveId">자동</div>
 						<div class="saveButton">
@@ -117,7 +117,7 @@
 							<div class="saveName"></div>
 						<</if>>
 						<div class="saveDetails">
-							<span><<print _saveDetails.autosave.title.replace(/</g, "< ")>></span>
+							<span><<print _saveDetails.autosave.desc.replace(/</g, "< ")>></span>
 							<span @class="'datestamp' + (_saveDetails.autosave.date gte _currentTime - 1800000 ? ' gold':'')"><<print new Date(_saveDetails.autosave.date).toLocaleString()>></span>
 						</div>
 					</div>
@@ -139,7 +139,7 @@
 				<</if>>
 			<<elseif _i lt 9>>
 				<<set _slot to _i - 1>>
-				<<if _saveDetails.slots[_slot] isnot null>>
+				<<if _saveDetails.slots[_slot] isnot null and _saveDetails.slots[_slot].desc isnot undefined>>
 					<div class="saveGroup">
 						<div class="saveId"><<print _i>></div>
 						<div class="saveButton">
@@ -159,7 +159,7 @@
 							<</if>>
 						</div>
 						<div class="saveDetails">
-							<span><<print _saveDetails.slots[_slot].title.replace(/</g, "< ")>></span>
+							<span><<print _saveDetails.slots[_slot].desc.replace(/</g, "< ")>></span>
 							<span @class="'datestamp' + (_saveDetails.slots[_slot].date gte _currentTime - 1800000 ? ' gold':'')"><<print new Date(_saveDetails.slots[_slot].date).toLocaleString()>></span>
 						</div>
 					</div>
@@ -214,7 +214,7 @@
 		현재 파일로 저장할 수 없습니다.
 	<<else>>
 		<<set _exportName to "'test"+($saveName isnot ''?'-'+$saveName:'')+ "'">>
-		<input type="button" value="파일로 저장" @onclick="'updateExportDay();SugarCube.Save.export('+_exportName+')'">
+		<input type="button" value="파일로 저장" @onclick="'updateExportDay();SugarCube.Save.disk.save('+_exportName+')'">
 	<</if>>
 <</if>>
 
@@ -259,9 +259,9 @@
 
 <<widget "saveWarning">><<nobr>>
 <div class="saveBorder">
-	<<if _saveDetails.slots[$args[0]] isnot null>>
-		<<if _saveDetails.slots[$args[0]].metadata isnot undefined>>
-			<<if _saveDetails.slots[$args[0]].metadata.saveId isnot $saveId>>
+	<<if _saveDetails.slots[_args[0]] isnot null>>
+		<<if _saveDetails.slots[_args[0]].metadata isnot undefined>>
+			<<if _saveDetails.slots[_args[0]].metadata.saveId isnot $saveId>>
 				<<set _showSaveId to true>>
 			<<else>>
 				<<set _showSaveId to false>>
@@ -270,10 +270,10 @@
 			<<set _showSaveId to "noId">>
 		<</if>>
 	<</if>>
-	<<if _saveDetails.slots[$args[0]] is null>>
-		<h4 class="red">슬롯 <<print ($args[0] is "auto"? "auto": $args[0] + 1)>>에 저장</h4>
+	<<if _saveDetails.slots[_args[0]] is null>>
+		<h4 class="red">슬롯 <<print (_args[0] is "auto"? "auto": _args[0] + 1)>>에 저장</h4>
 	<<else>>
-		<h4 class="red">슬롯 <<print ($args[0] is "auto"? "auto": $args[0] + 1)>>에 덮어쓰시겠습니까?</h4>
+		<h4 class="red">슬롯 <<print (_args[0] is "auto"? "auto": _args[0] + 1)>>에 덮어쓰시겠습니까?</h4>
 		<<if _showSaveId is true>>
 		<span class="red">세이브 ID가 일치하지 않습니다. 덮어쓰시겠습니까?</span>
 		<br>
@@ -282,19 +282,19 @@
 		<span class="red">옛 세이브 파일에서 세이브 ID를 찾을 수 없습니다. 덮어쓰시겠습니까?</span>
 		<br>
 		<</if>>
-		옛 세이브: <<print _saveDetails.slots[$args[0]].title>>
+		옛 세이브: <<print _saveDetails.slots[_args[0]].desc>>
 		<br>
-		<<print new Date(_saveDetails.slots[$args[0]].date).toLocaleString()>>
+		<<print new Date(_saveDetails.slots[_args[0]].date).toLocaleString()>>
 		<br>
 	<</if>>
-	/*<<if _saveDetails.slots[$args[0]].metadata isnot undefined>>
-		<<if _saveDetails.slots[$args[0]].metadata.saveName isnot undefined>>
-			옛 세이브 이름: <<print _saveDetails.slots[$args[0]].metadata.saveName>>
+	/*<<if _saveDetails.slots[_args[0]].metadata isnot undefined>>
+		<<if _saveDetails.slots[_args[0]].metadata.saveName isnot undefined>>
+			옛 세이브 이름: <<print _saveDetails.slots[_args[0]].metadata.saveName>>
 			<br>
 		<</if>>
 	<</if>>*/
 	<<if _showSaveId is true>>
-		옛 세이브 ID: <<print _saveDetails.slots[$args[0]].metadata.saveId>>
+		옛 세이브 ID: <<print _saveDetails.slots[_args[0]].metadata.saveId>>
 		<br><br>
 		<<if $saveName isnot undefined>>
 			현 세이브 이름 Name: <<print $saveName>>
@@ -303,7 +303,7 @@
 		현 세이브 ID: <<print $saveId>>
 		<br>
 	<</if>>
-	<input type="button" class="saveMenuButton saveMenuConfirm" value="저장" @onclick="'save('+ $args[0] +', true,'+$saveId+', `'+$saveName+'`)'"/>
+	<input type="button" class="saveMenuButton saveMenuConfirm" value="저장" @onclick="'save('+ _args[0] +', true,'+$saveId+', `'+$saveName+'`)'"/>
 	<input type="button" class="saveMenuButton saveMenuConfirm" value="취소" onclick="resetSaveMenu();"/>
 	<br>
 </div>
@@ -311,19 +311,19 @@
 
 <<widget "loadWarning">><<nobr>>
 <div class="saveBorder">
-	<h4 class="red">슬롯 <<print ($args[0] is "auto"? "auto": $args[0] + 1)>> 로드</h4>
-	<<if $args[0] is "auto">>
-		<<print _saveDetails.autosave.title>>
+	<h4 class="red">슬롯 <<print (_args[0] is "auto"? "auto": _args[0] + 1)>> 로드</h4>
+	<<if _args[0] is "auto">>
+		<<print _saveDetails.autosave.desc>>
 		<br>
 		<<print new Date(_saveDetails.autosave.date).toLocaleString()>>
 		<br>
 		<input type="button" class="saveMenuButton saveMenuConfirm" value="로드" onclick="loadSave('auto', true)"/>
 	<<else>>
-		<<print _saveDetails.slots[$args[0]].title>>
+		<<print _saveDetails.slots[_args[0]].desc>>
 		<br>
-		<<print new Date(_saveDetails.slots[$args[0]].date).toLocaleString()>>
+		<<print new Date(_saveDetails.slots[_args[0]].date).toLocaleString()>>
 		<br>
-		<input type="button" class="saveMenuButton saveMenuConfirm" value="로드" @onclick="'loadSave('+ $args[0] +', true)'"/>
+		<input type="button" class="saveMenuButton saveMenuConfirm" value="로드" @onclick="'loadSave('+ _args[0] +', true)'"/>
 	<</if>>
 	<input type="button" class="saveMenuButton saveMenuConfirm" value="취소" onclick="resetSaveMenu();"/>
 	<br>
@@ -332,19 +332,19 @@
 
 <<widget "deleteWarning">><<nobr>>
 <div class="saveBorder">
-	<h4 class="red">슬롯 <<print ($args[0] is "auto"? "auto": $args[0] + 1)>> 삭제</h4>
-	<<if $args[0] is "auto">>
-		<<print _saveDetails.autosave.title>>
+	<h4 class="red">슬롯 <<print (_args[0] is "auto"? "auto": _args[0] + 1)>> 삭제</h4>
+	<<if _args[0] is "auto">>
+		<<print _saveDetails.autosave.desc>>
 		<br>
 		<<print new Date(_saveDetails.autosave.date).toLocaleString()>>
 		<br>
 		<input type="button" class="saveMenuButton" value="자동 저장 삭제" onclick="deleteSave('auto', true)"/>
 	<<else>>
-		<<print _saveDetails.slots[$args[0]].title>>
+		<<print _saveDetails.slots[_args[0]].desc>>
 		<br>
-		<<print new Date(_saveDetails.slots[$args[0]].date).toLocaleString()>>
+		<<print new Date(_saveDetails.slots[_args[0]].date).toLocaleString()>>
 		<br>
-		<input type="button" class="saveMenuButton" value="삭제" @onclick="'deleteSave('+ $args[0] +', true)'"/>
+		<input type="button" class="saveMenuButton" value="삭제" @onclick="'deleteSave('+ _args[0] +', true)'"/>
 	<</if>>
 	<input type="button" class="saveMenuButton saveMenuConfirm" value="취소" onclick="resetSaveMenu();"/>
 	<br>
@@ -365,18 +365,18 @@
 
 <<widget "saveConfirm">><<nobr>>
 	<<replace #saveList>>
-		<<saveWarning $args[0]>>
+		<<saveWarning _args[0]>>
 	<</replace>>
 <</nobr>><</widget>>
 
 <<widget "loadConfirm">><<nobr>>
 	<<replace #saveList>>
-		<<loadWarning $args[0]>>
+		<<loadWarning _args[0]>>
 	<</replace>>
 <</nobr>><</widget>>
 
 <<widget "deleteConfirm">><<nobr>>
 	<<replace #saveList>>
-		<<deleteWarning $args[0]>>
+		<<deleteWarning _args[0]>>
 	<</replace>>
 <</nobr>><</widget>>

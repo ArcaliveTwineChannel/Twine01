@@ -6,4 +6,5 @@
 <<if $saveName is undefined>>
 	<<set $saveName to "">>
 <</if>>
+<<set Config.saves.metadata = () => { return { "saveId": $saveId, "saveName": $saveName }; }>>
 <</widget>>

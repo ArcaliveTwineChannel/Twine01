@@ -19,11 +19,12 @@ window.StartConfig = {
  * nosave: 저장 비활성화
  * autosave: 오토세이브
  */
-Config.saves.isAllowed = function () {
+Config.saves.isAllowed = function (saveType) {
     if (tags().includes("nosave")) {
         return false;
     }
     return true;
 };
 
+// 자동 세이브 갯수
 Config.saves.maxAutoSaves = 1;

@@ -1,13 +1,17 @@
+var gridSaveDetails;
 //세이브 설정 준비
 window.prepareSaveDetails = function (forceRun){
-	if("gridSaveDetails" in localStorage === false || forceRun === true){
+	if(!gridSaveDetails || forceRun === true){	// if("gridSaveDetails" in localStorage === false || forceRun === true){
 		var saveDetails = {autosave: null, slots:[null,null,null,null,null,null,null,null]}
-		var SugarCubeSaveDetails = Save.browser.slot.entries();
+		var SugarCubeSaveDetails = {};
+		SugarCubeSaveDetails.autosave = Save.browser.auto.entries()[0];
+		SugarCubeSaveDetails.slots = Save.browser.slot.entries();
 		if(SugarCubeSaveDetails.autosave != null){
 			saveDetails.autosave = {
-				title:SugarCubeSaveDetails.autosave.title,
-				date:SugarCubeSaveDetails.autosave.date,
-				metadata:SugarCubeSaveDetails.autosave.metadata
+				desc:SugarCubeSaveDetails.autosave.info.desc,
+				date:SugarCubeSaveDetails.autosave.info.date,
+				id:SugarCubeSaveDetails.autosave.info.id,
+				metadata:SugarCubeSaveDetails.autosave.info.metadata
 			}
 			if(saveDetails.autosave.metadata === undefined){
 				saveDetails.autosave.metadata = {saveName:""};
@@ -19,9 +23,10 @@ window.prepareSaveDetails = function (forceRun){
 		for (var i=0; i<SugarCubeSaveDetails.slots.length;i++){
 			if(SugarCubeSaveDetails.slots[i] !== null){
 				saveDetails.slots[i] = {
-					title:SugarCubeSaveDetails.slots[i].title,
-					date:SugarCubeSaveDetails.slots[i].date,
-					metadata:SugarCubeSaveDetails.slots[i].metadata
+					desc:SugarCubeSaveDetails.slots[i].info.desc,
+					date:SugarCubeSaveDetails.slots[i].info.date,
+					id:SugarCubeSaveDetails.slots[i].info.id,
+					metadata:SugarCubeSaveDetails.slots[i].info.metadata
 				};
 				if(saveDetails.slots[i].metadata === undefined){
 					saveDetails.slots[i].metadata = {saveName:"old save", saveId:0}
@@ -33,72 +38,96 @@ window.prepareSaveDetails = function (forceRun){
 				saveDetails.slots[i] = null;
 			}
 		}
-	
-		localStorage.setItem("gridSaveDetails" ,JSON.stringify(saveDetails));
+		gridSaveDetails = JSON.stringify(saveDetails);	// localStorage.setItem("gridSaveDetails" ,JSON.stringify(saveDetails));
 	}
 	return;
 }
 
 // 세이브 상세 설정 (인수: 슬롯번호, metadate (, story))
 window.setSaveDetail = function (saveSlot, metadata, story){
-	var saveDetails = JSON.parse(localStorage.getItem("gridSaveDetails"));
+	var saveDetails = JSON.parse(gridSaveDetails);	// var saveDetails = JSON.parse(localStorage.getItem("gridSaveDetails"));
 	if(saveSlot === "autosave"){
 		saveDetails.autosave = {
-			title:SugarCube.Story.get(passage()).description(),
+			desc:SugarCube.Story.get(passage()).description(),
 			date:Date.now(),
+			id:Config.saves.id,
 			metadata:metadata
 		};
 	}else{
 		var slot = parseInt(saveSlot);
 		saveDetails.slots[slot] = {
-			title:SugarCube.Story.get(passage()).description(),
+			desc:SugarCube.Story.get(passage()).description(),
 			date:Date.now(),
+			id:Config.saves.id,
 			metadata:metadata
 		};
 	}
-	localStorage.setItem("gridSaveDetails" ,JSON.stringify(saveDetails));
+	gridSaveDetails = JSON.stringify(saveDetails);	// localStorage.setItem("gridSaveDetails" ,JSON.stringify(saveDetails));
 }
 
 // localStorage에 인수값에 해당되는 슬롯의 세이브 가져오기
 window.getSaveDetails = function (saveSlot){
-	if("gridSaveDetails" in localStorage) return JSON.parse(localStorage.getItem("gridSaveDetails"));
+	if(gridSaveDetails) return JSON.parse(gridSaveDetails);	// if("gridSaveDetails" in localStorage) return JSON.parse(localStorage.getItem("gridSaveDetails"));
 }
 
 // localStorage에서 인수값에 해당되는 슬롯의 세이브 제거
 window.deleteSaveDetails = function (saveSlot){
-	var saveDetails = JSON.parse(localStorage.getItem("gridSaveDetails"));
+	var saveDetails = JSON.parse(gridSaveDetails);	// var saveDetails = JSON.parse(localStorage.getItem("gridSaveDetails"));
 	if(saveSlot === "autosave"){
 		saveDetails.autosave = null;
 	}else{
 		var slot = parseInt(saveSlot);
 		saveDetails.slots[slot] = null;
 	}
-	localStorage.setItem("gridSaveDetails" ,JSON.stringify(saveDetails));
+	gridSaveDetails = JSON.stringify(saveDetails);	// localStorage.setItem("gridSaveDetails" ,JSON.stringify(saveDetails));
 }
 
 // localStorage에서 전체 세이브 초기화
 window.deleteAllSaveDetails = function (saveSlot){
 	var saveDetails = {autosave: null, slots:[null,null,null,null,null,null,null,null]};
-	localStorage.setItem("gridSaveDetails" ,JSON.stringify(saveDetails));
+	gridSaveDetails = JSON.stringify(saveDetails);	// localStorage.setItem("gridSaveDetails" ,JSON.stringify(saveDetails));
 }
 
 // 현재 세이브 리스트 반환
 window.returnSaveDetails = function () {
-	return Save.browser.slot.entries();
+	var saveDetails = {autosave: null, slots:[null,null,null,null,null,null,null,null]};
+	/*
+	var saveDetails = {};
+	SaveDetails.autosave = Save.browser.auto.entries();
+	SaveDetails.slots = Save.browser.slot.entries();
+	*/
+	console.error("Not implemented");
+	UI.alert("Not implemented");
+	return saveDetails;	// return Save.get();
 }
 
 window.resetSaveMenu = function () {
 	new Wikifier(null, '<<resetSaveMenu>>');
 }
-
-window.loadSave = function (saveSlot, confirm) {
+window.loadSave = async function (saveSlot, confirm) {
 	if (SugarCube.State.variables.confirmLoad === true && confirm === undefined) {
 		new Wikifier(null, '<<loadConfirm ' + saveSlot + '>>');
 	} else {
 		if (saveSlot === "auto") {
-			Save.autosave.load();
+			await Save.browser.auto.load(0)
+			.then(() => {
+				Engine.show();
+			})
+			.catch(error => {
+				//  Failure.  Handle the error.
+				console.error(error);
+				UI.alert(error);
+			});
 		} else {
-			Save.slots.load(saveSlot);
+			await Save.browser.slot.load(saveSlot)
+			.then(() => {
+				Engine.show();
+			})
+			.catch(error => {
+				//  Failure.  Handle the error.
+				console.error(error);
+				UI.alert(error);
+			});
 		}
 	}
 }
@@ -111,7 +140,7 @@ window.save = function (saveSlot, confirm, saveId, saveName) {
 	} else {
 		if (saveSlot != undefined) {
 			updateSavesCount();
-			Save.slots.save(saveSlot, null, { "saveId": saveId, "saveName": saveName });
+			Save.browser.slot.save(saveSlot, null, { "saveId": saveId, "saveName": saveName });
 			setSaveDetail(saveSlot, { "saveId": saveId, "saveName": saveName })
 			SugarCube.State.variables.currentOverlay = null;
 			overlayShowHide("customOverlay");
@@ -125,7 +154,7 @@ window.deleteSave = function (saveSlot, confirm) {
 			new Wikifier(null, '<<clearSaveMenu>>');
 			return;
 		} else if (confirm === true) {
-			Save.clear();
+			Save.browser.clear();
 			deleteAllSaveDetails();
 		}
 	} else if (saveSlot === "auto") {
@@ -133,7 +162,7 @@ window.deleteSave = function (saveSlot, confirm) {
 			new Wikifier(null, '<<deleteConfirm ' + saveSlot + '>>');
 			return;
 		} else {
-			Save.autosave.delete();
+			Save.browser.auto.delete(0);
 			deleteSaveDetails("autosave");
 		}
 	} else {
@@ -141,7 +170,7 @@ window.deleteSave = function (saveSlot, confirm) {
 			new Wikifier(null, '<<deleteConfirm ' + saveSlot + '>>');
 			return;
 		} else {
-			Save.slots.delete(saveSlot);
+			Save.browser.slot.delete(saveSlot);
 			deleteSaveDetails(saveSlot)
 		}
 	}
@@ -154,26 +183,36 @@ window.importSave = function (saveFile) {
 	var reader = new FileReader();
 
 	reader.onloadend = function () {
-		DeserializeGame(this.result);
+		if (DeserializeGame(this.result))
+			Engine.show();
 	}
 
 	reader.readAsText(saveFile[0]);
 }
 
-window.SerializeGame = function () { return Save.serialize(); }; window.DeserializeGame = function (myGameState) { return Save.deserialize(myGameState) };
+window.SerializeGame = function () { return Save.base64.save(); }; window.DeserializeGame = function (myGameState) { return Save.base64.load(myGameState) };
 
 window.getSaveData = function () {
+	try {
 	var input = document.getElementById("saveDataInput");
 	updateExportDay();
-	input.value = Save.serialize();
+	input.value = Save.base64.save();
+	}
+	catch (error) {
+	// Failure.  Handle the error.
+	console.error(error);
+	UI.alert(error);
+	}
 }
 
 window.loadSaveData = function () {
 	var input = document.getElementById("saveDataInput");
-	var result = Save.deserialize(input.value);
+	var result = Save.base64.load(input.value);
 	if (result === null) {
 		input.value = "Invalid Save."
 	}
+	else
+		Engine.show();
 }
 
 window.clearTextBox = function (id) {
@@ -233,4 +272,3 @@ window.updateSavesCount = function(){
 		SugarCube.State.history[0].variables.saveDetails.slot.count++;
 	}
 }
-
