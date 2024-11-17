@@ -1,5 +1,18 @@
-:: StoryCaption
-<<set $currentOverlay to null>>
+:: StoryCaption [nobr]
+<<if passage() isnot "Start" and passage() isnot "Start2">>
+	aaaa
+	<br><br>
+
+	<<button 스텟>>
+	<</button>>
+	
+
+
+	<<set $currentOverlay to null>>
+	
+<<else>>
+	<div id="versioninfo"><<versioninfo>></div>
+<</if>>
 
 <<button 저장/옵션>>
 	<<overlayReplace "options">>
